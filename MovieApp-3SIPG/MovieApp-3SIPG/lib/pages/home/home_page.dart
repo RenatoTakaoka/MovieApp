@@ -13,11 +13,13 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   final ApiServices apiServices = ApiServices();
+  
   late Future<List<Movie>> nowPlayingMovies;
 
   @override
   void initState() {
     nowPlayingMovies = apiServices.getFutureMovies();
+    
     super.initState();
   }
 
@@ -72,7 +74,25 @@ class _HomePageState extends State<HomePage> {
                   ),
                 ),
               ),
-              const MoviesHorizontalList(),
+              FutureBuilder(
+                future: nowPlayingMovies,
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  }
+                  if (snapshot.hasError) {
+                    return Center(
+                      child: Text(snapshot.error!.toString()),
+                    );
+                  }
+                  if (snapshot.hasData) {
+                    return MoviesHorizontalList(movies: snapshot.data!);
+                  }
+                  return const Text("Banana");
+                },
+              ),
               const Padding(
                 padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
                 child: Text(
@@ -84,7 +104,25 @@ class _HomePageState extends State<HomePage> {
                   ),
                 ),
               ),
-              const MoviesHorizontalList(),
+              FutureBuilder(
+                future: nowPlayingMovies,
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  }
+                  if (snapshot.hasError) {
+                    return Center(
+                      child: Text(snapshot.error!.toString()),
+                    );
+                  }
+                  if (snapshot.hasData) {
+                    return MoviesHorizontalList(movies: snapshot.data!);
+                  }
+                  return const Text("Banana");
+                },
+              ),
               const SizedBox(
                 height: 20,
               ),
