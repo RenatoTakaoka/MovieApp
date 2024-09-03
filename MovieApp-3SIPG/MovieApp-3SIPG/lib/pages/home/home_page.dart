@@ -87,7 +87,7 @@ class _HomePageState extends State<HomePage> {
                       child: Text(snapshot.error!.toString()),
                     );
                   }
-                  if (!snapshot.hasData) {
+                  if (snapshot.hasData) {
                     return MoviesHorizontalList(movies: snapshot.data!);
                   }
                   return const Text("Banana");
