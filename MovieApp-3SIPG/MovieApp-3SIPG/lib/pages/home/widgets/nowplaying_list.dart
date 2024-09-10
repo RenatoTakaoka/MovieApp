@@ -13,6 +13,7 @@ class NowPlayingList extends StatefulWidget {
 class _NowPlayingListState extends State<NowPlayingList> {
   final PageController _pageController = PageController(viewportFraction: 0.9);
   int currentPage = 0;
+  int limiteFilmes = 12;
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -26,7 +27,7 @@ class _NowPlayingListState extends State<NowPlayingList> {
               });
             },
             controller: _pageController,
-            itemCount: widget.movies.length,
+            itemCount: limiteFilmes,
             itemBuilder: (context, index) {
               return CustomCardThumbnail(
                 imageAsset: widget.movies[index].posterPath,
@@ -44,7 +45,7 @@ class _NowPlayingListState extends State<NowPlayingList> {
 
   List<Widget> _buildPageIndicators() {
     List<Widget> indicator = [];
-    for (var i = 0; i < widget.movies.length; i++) {
+    for (var i = 0; i < limiteFilmes; i++) {
       indicator.add(_buildIndicator(i == currentPage));
     }
     return indicator;

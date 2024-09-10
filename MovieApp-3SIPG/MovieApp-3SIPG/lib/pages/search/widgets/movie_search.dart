@@ -27,7 +27,9 @@ class MovieSearch extends StatelessWidget {
             child: FadeInImage(
                 image: NetworkImage('$imageUrl${movie.posterPath}'),
                 fit: BoxFit.cover,
-                placeholder: const AssetImage("images/netflix.png")),
+                placeholder: const AssetImage("images/netflix.png"),
+                imageErrorBuilder: (context, error, stackTrace) => const Image(image: AssetImage("images/netflix.png")),
+                ),
           ),
           const SizedBox(
             width: 10.0,
