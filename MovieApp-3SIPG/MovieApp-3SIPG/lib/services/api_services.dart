@@ -52,7 +52,18 @@ class ApiServices {
     }
     throw Exception('Ocorreu um erro');
   }
-  
+
+  Future<Result> searchMovies(String movieName) async {
+    const endpoint = 'search/movie';
+    final uri = Uri.encodeFull("$baseUrl$endpoint$key&query=$movieName&include_adult=true");
+    final url = Uri.parse(uri);
+    final response = await http.get(url);
+    if (response.statusCode == 200) {
+      var json = jsonDecode(response.body);
+      return Result.fromJson(json);
+    }
+    throw Exception('Ocorreu um erro');
+  }
 
   Future<List<Movie>> getFutureMovies() async {
     await Future.delayed(const Duration(seconds: 5));

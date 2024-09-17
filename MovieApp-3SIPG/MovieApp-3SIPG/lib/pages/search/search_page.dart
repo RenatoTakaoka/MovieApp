@@ -1,5 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:movie_app/models/movie_model.dart';
+import 'package:movie_app/pages/search/widgets/movie_search_list.dart';
+import 'package:movie_app/services/api_services.dart';
 
 class SearchPage extends StatefulWidget {
   const SearchPage({super.key});
@@ -9,12 +12,29 @@ class SearchPage extends StatefulWidget {
 }
 
 class _SearchPageState extends State<SearchPage> {
+  final ApiServices apiServices = ApiServices();
+
+  String search = "";
+
+  late Future<Result> searchMovies;
+
+  searchMovieF(String searchParameter) {
+    searchMovies = apiServices.searchMovies(searchParameter);
+  }
+
+  @override
+  void initState() {
+    searchMovies = apiServices.searchMovies("");
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
         child: SingleChildScrollView(
           child: Column(
+            mainAxisSize: MainAxisSize.min, 
             children: [
               const SizedBox(
                 height: 10,
@@ -33,13 +53,39 @@ class _SearchPageState extends State<SearchPage> {
                   ),
                   style: const TextStyle(color: Colors.white),
                   backgroundColor: Colors.grey.withOpacity(0.3),
-                  onChanged: (value) {},
+                  onSubmitted: (value) {
+                    setState(() {
+                      searchMovieF(value);
+                    });
+                  },
                 ),
               ),
               const SizedBox(
                 height: 10,
               ),
-              const Text('Search')
+              const Text('Search'),
+              FutureBuilder(
+                future: searchMovies,
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  }
+                  if (snapshot.hasError) {
+                    return Center(
+                      child: Text(
+                        snapshot.error.toString(),
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: Colors.red,
+                        ),
+                      ),
+                    );
+                  }
+                  return MovieSearchList(movies: snapshot.data!.movies);
+                },
+              ),
             ],
           ),
         ),
