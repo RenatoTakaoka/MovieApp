@@ -1,8 +1,10 @@
 import 'dart:convert';
 
 import 'package:movie_app/common/utils.dart';
+import 'package:movie_app/models/movie_detail.dart';
 import 'package:movie_app/models/movie_model.dart';
 import 'package:http/http.dart' as http;
+import 'package:movie_app/models/movie_reviews.dart';
 
 const baseUrl = 'https://api.themoviedb.org/3/';
 const key = '?api_key=$apiKey';
@@ -61,6 +63,30 @@ class ApiServices {
     if (response.statusCode == 200) {
       var json = jsonDecode(response.body);
       return Result.fromJson(json);
+    }
+    throw Exception('Ocorreu um erro');
+  }
+
+  Future<MovieDetail> moviesDetails(int movieId) async {
+    const endpoint = 'movie/';
+    final uri = Uri.encodeFull("$baseUrl$endpoint$movieId$key");
+    final url = Uri.parse(uri);
+    final response = await http.get(url);
+    if (response.statusCode == 200) {
+      var json = jsonDecode(response.body);
+      return MovieDetail.fromJson(json);
+    }
+    throw Exception('Ocorreu um erro');
+  }
+
+  Future<ReviewResult> getReviews(int movieId) async {
+    const endpoint = 'movie/';
+    final uri = Uri.encodeFull("$baseUrl$endpoint$movieId/reviews$key");
+    final url = Uri.parse(uri);
+    final response = await http.get(url);
+    if (response.statusCode == 200) {
+      var json = jsonDecode(response.body);
+      return ReviewResult.fromJson(json);
     }
     throw Exception('Ocorreu um erro');
   }

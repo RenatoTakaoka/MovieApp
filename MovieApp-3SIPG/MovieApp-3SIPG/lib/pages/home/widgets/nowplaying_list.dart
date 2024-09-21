@@ -30,6 +30,7 @@ class _NowPlayingListState extends State<NowPlayingList> {
             itemCount: limiteFilmes,
             itemBuilder: (context, index) {
               return CustomCardThumbnail(
+                movieId: widget.movies[index].id,
                 imageAsset: widget.movies[index].posterPath,
               );
             },

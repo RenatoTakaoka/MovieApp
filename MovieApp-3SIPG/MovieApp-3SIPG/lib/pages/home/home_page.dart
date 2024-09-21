@@ -68,35 +68,43 @@ class _HomePageState extends State<HomePage> {
                 height: 20,
               ),
               const Padding(
-                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-                child: Text(
-                  'Popular',
-                  style: TextStyle(
-                    color: Colors.white54,
-                    fontWeight: FontWeight.w300,
-                    fontSize: 20,
-                  ),
+              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+              child: Text(
+                'Popular',
+                style: TextStyle(
+                  color: Colors.white54,
+                  fontWeight: FontWeight.w300,
+                  fontSize: 20,
                 ),
               ),
-              FutureBuilder(
-                future: popularMovies,
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
+            ),
+            FutureBuilder(
+              future: popularMovies,
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(
+                    child: CircularProgressIndicator(),
+                  );
+                }
+                if (snapshot.hasError) {
+                  return Center(
+                    child: Text('Erro: ${snapshot.error}', style: const TextStyle(color: Colors.red)),
+                  );
+                }
+                if (snapshot.hasData) {
+                  final movies = snapshot.data!.movies;
+                  if (movies.isEmpty) {
                     return const Center(
-                      child: CircularProgressIndicator(),
+                      child: Text("Nenhum filme encontrado"),
                     );
                   }
-                  if (snapshot.hasError) {
-                    return Center(
-                      child: Text(snapshot.error!.toString()),
-                    );
-                  }
-                  if (snapshot.hasData) {
-                    return MoviesHorizontalList(movies: snapshot.data!.movies);
-                  }
-                  return const Text("Banana");
-                },
-              ),
+                  return MoviesHorizontalList(movies: movies, movieId: movies[0].id);
+                }
+                return const Center(
+                  child: Text("Nenhum dado disponível"),
+                );
+              },
+            ),
               const Padding(
                 padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
                 child: Text(
@@ -122,7 +130,7 @@ class _HomePageState extends State<HomePage> {
                     );
                   }
                   if (snapshot.hasData) {
-                    return MoviesHorizontalList(movies: snapshot.data!.movies);
+                    return MoviesHorizontalList(movies: snapshot.data!.movies, movieId: snapshot.data!.movies[0].id);
                   }
                   return const Text("Banana");
                 },

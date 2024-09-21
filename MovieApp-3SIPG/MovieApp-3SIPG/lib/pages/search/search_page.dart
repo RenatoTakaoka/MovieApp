@@ -13,13 +13,13 @@ class SearchPage extends StatefulWidget {
 
 class _SearchPageState extends State<SearchPage> {
   final ApiServices apiServices = ApiServices();
-
   String search = "";
-
   late Future<Result> searchMovies;
 
-  searchMovieF(String searchParameter) {
-    searchMovies = apiServices.searchMovies(searchParameter);
+  void searchMovieF(String searchParameter) {
+    setState(() {
+      searchMovies = apiServices.searchMovies(searchParameter);
+    });
   }
 
   @override
@@ -31,40 +31,37 @@ class _SearchPageState extends State<SearchPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: const Text('Buscar Filmes'),
+        backgroundColor: Colors.black87,
+      ),
       body: SafeArea(
-        child: SingleChildScrollView(
-          child: Column(
-            mainAxisSize: MainAxisSize.min, 
-            children: [
-              const SizedBox(
-                height: 10,
-              ),
-              Padding(
-                padding: const EdgeInsets.all(12.0),
-                child: CupertinoSearchTextField(
-                  padding: const EdgeInsets.all(10.0),
-                  prefixIcon: const Icon(
-                    CupertinoIcons.search,
-                    color: Colors.grey,
-                  ),
-                  suffixIcon: const Icon(
-                    Icons.cancel,
-                    color: Colors.grey,
-                  ),
-                  style: const TextStyle(color: Colors.white),
-                  backgroundColor: Colors.grey.withOpacity(0.3),
-                  onSubmitted: (value) {
-                    setState(() {
-                      searchMovieF(value);
-                    });
-                  },
+        child: Column(
+          children: [
+            const SizedBox(height: 10),
+            Padding(
+              padding: const EdgeInsets.all(12.0),
+              child: CupertinoSearchTextField(
+                padding: const EdgeInsets.all(10.0),
+                prefixIcon: const Icon(
+                  CupertinoIcons.search,
+                  color: Colors.grey,
                 ),
+                suffixIcon: const Icon(
+                  Icons.cancel,
+                  color: Colors.grey,
+                ),
+                style: const TextStyle(color: Colors.white),
+                backgroundColor: Colors.grey.withOpacity(0.3),
+                onSubmitted: (value) {
+                  searchMovieF(value);
+                },
               ),
-              const SizedBox(
-                height: 10,
-              ),
-              const Text('Search'),
-              FutureBuilder(
+            ),
+            const SizedBox(height: 10),
+            const Text('Search'),
+            Expanded(
+              child: FutureBuilder<Result>(
                 future: searchMovies,
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
@@ -83,13 +80,19 @@ class _SearchPageState extends State<SearchPage> {
                       ),
                     );
                   }
-                  return MovieSearchList(movies: snapshot.data!.movies);
+                  if (snapshot.hasData) {
+                    return MovieSearchList(movies: snapshot.data!.movies);
+                  }
+                  return const Center(
+                    child: Text("Nenhum dado disponível"),
+                  );
                 },
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
+      backgroundColor: Colors.black,
     );
   }
 }
